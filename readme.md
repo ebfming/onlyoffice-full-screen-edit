@@ -1,5 +1,3 @@
------
-
 # 💻 Using ONLYOFFICE Full-Screen Editing on the Nextcloud Platform
 
 # 1\. Feature Description

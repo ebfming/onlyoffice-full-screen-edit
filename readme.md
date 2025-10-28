@@ -1,8 +1,8 @@
 -----
 
-## 💻 Using ONLYOFFICE Full-Screen Editing on the Nextcloud Platform
+# 💻 Using ONLYOFFICE Full-Screen Editing on the Nextcloud Platform
 
-### 1\. Feature Description
+# 1\. Feature Description
 
 [cite\_start]ONLYOFFICE 9.11 plugin already provides API support and back-end configuration[cite: 3].
 [cite\_start]Reference the image below[cite: 3]:
@@ -32,9 +32,9 @@
 
 -----
 
-### 2\. Specific Implementation
+# 2\. Specific Implementation
 
-#### 2.1. [cite\_start]Modification of `onlyoffice/lib/Controller/EditorController.php` [cite: 18, 19, 20, 21]
+## 2.1. [cite\_start]Modification of `onlyoffice/lib/Controller/EditorController.php` [cite: 18, 19, 20, 21]
 
 [cite\_start]Use a text editor to modify[cite: 22]:
 
@@ -71,7 +71,7 @@
 
 [cite\_start]The above section is our main object for modification[cite: 46]. [cite\_start]We actually only added one parameter: `"base"`[cite: 46].
 
-#### 2.2. [cite\_start]Modification of `onlyoffice/templates/editor.php` [cite: 47, 48]
+## 2.2. [cite\_start]Modification of `onlyoffice/templates/editor.php` [cite: 47, 48]
 
 [cite\_start]Use a text editor to modify[cite: 49]:
 
@@ -95,7 +95,7 @@
 
 -----
 
-### 3\. Nextcloud Template Function
+# 3\. Nextcloud Template Function
 
 [cite\_start]Nextcloud provides two display templates[cite: 60].
 [cite\_start]**Core Difference:** `TemplateResponse`'s `renderAs` parameter[cite: 61].
@@ -141,7 +141,7 @@
 
 -----
 
-### 4\. Summary
+# 4\. Summary
 
 [cite\_start]ONLYOFFICE already provides support interfaces for the full-screen editor[cite: 81]. [cite\_start]It's just that some display logic is incomplete or there is a bug[cite: 81]. [cite\_start]It can be used after a small fix[cite: 82]. [cite\_start]It has not undergone full testing, so I cannot guarantee that this adjustment is perfect[cite: 82]. [cite\_start]I believe ONLYOFFICE will soon provide a formal full-screen editor function[cite: 83].
 [cite\_start]Source code is attached[cite: 84].

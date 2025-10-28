@@ -1,147 +1,143 @@
-# 💻 Using ONLYOFFICE Full-Screen Editing on the Nextcloud Platform
+# Full-Screen Editing with OnlyOffice on the Nextcloud Platform
 
-# 1\. Feature Description
+# 1. Function Description
 
-[cite\_start]ONLYOFFICE 9.11 plugin already provides API support and back-end configuration[cite: 3].
-[cite\_start]Reference the image below[cite: 3]:
+In OnlyOffice 9.11, API support and backend configuration options have already been provided.
 
-[cite\_start]**Common Settings** [cite: 4]
-[cite\_start]Awes [cite: 5]
-[cite\_start]The display logic is not yet complete[cite: 6].
+See the reference image below:
 
-[cite\_start]Let's first look at the feature effect[cite: 7].
+However, the display logic has not yet been completed.
 
-[cite\_start]The default effect of using ONLYOFFICE within Nextcloud is as follows[cite: 8]:
-[cite\_start]Title [cite: 9]
+Let’s first take a look at the current usage behavior of OnlyOffice within Nextcloud in its default mode:
 
-[cite\_start]The advantage of this usage is its tight integration with Nextcloud[cite: 10]. [cite\_start]You can quickly switch to other functional areas via the top menu[cite: 10].
-[cite\_start]The drawbacks are[cite: 11]:
+This integration method is tightly coupled with Nextcloud, enabling users to quickly switch to other functional areas via the top navigation menu.
 
-1.  [cite\_start]The top menu seems redundant for immersive office operations[cite: 12].
-2.  [cite\_start]For small-screen computers, such as laptops, the top menu wastes some space[cite: 13].
+But it has some drawbacks:
 
-[cite\_start]Next, let's look at the full-screen effect[cite: 14]:
-[cite\_start]Title [cite: 15]
+1. For immersive editing, the top navigation bar is redundant.
+2. For small-screen laptops, the top bar wastes valuable space.
 
-[cite\_start]The above is the full-screen editing effect, which perfectly solves the aforementioned problems[cite: 16].
+Now let’s look at the full-screen effect:
 
-[cite\_start]ONLYOFFICE 9.11 supports two forms from the backend management features[cite: 17]. [cite\_start]It's just that the development is not yet complete[cite: 17].
-[cite\_start]Let's supplement this feature[cite: 17].
+The full-screen editing mode resolves the above problems perfectly.
 
------
+OnlyOffice 9.11 already supports two layout modes from the admin panel, but the implementation was not fully completed.  
+So we will supplement this feature manually.
 
-# 2\. Specific Implementation
+# 2. Implementation
 
-## 2.1. [cite\_start]Modification of `onlyoffice/lib/Controller/EditorController.php` [cite: 18, 19, 20, 21]
+## 2.1 Modify `onlyoffice/lib/Controller/EditorController.php`
 
-[cite\_start]Use a text editor to modify[cite: 22]:
+Edit using a text editor:
 
 ```php
-[cite_start]$response = null; [cite: 23]
-[cite_start]if ($inframe === true) { [cite: 24]
-    [cite_start]$params["inframe"] = true; [cite: 25]
-    [cite_start]$response = new TemplateResponse($this->appName, "editor", [cite: 26]
-        [cite_start]$params, "base"); [cite: 27]
-[cite_start]} else { [cite: 27]
-    [cite_start]if ($isLoggedIn) { [cite: 28]
-        [cite_start]$response = new TemplateResponse($this->appName, [cite: 29]
-            [cite_start]"editor", $params); [cite: 30]
-    [cite_start]} else { [cite: 31]
-        [cite_start]$response = new PublicTemplateResponse($this->appName, [cite: 32]
-            [cite_start]"editor", $params); [cite: 33]
-        [cite_start]list($file, $error, $share) = [cite: 34]
-            [cite_start]$this->fileUtility->getFileByToken($fileId, $shareToken); [cite: 35]
-        [cite_start]if (!isset($error)) { [cite: 36]
-            [cite_start]$response->setHeaderTitle($file->getName()); [cite: 37]
-        [cite_start]} [cite: 38]
-    [cite_start]} [cite: 39]
-[cite_start]} [cite: 40]
-```
+$response = null;
 
-[cite\_start]Where[cite: 41]:
+if ($inframe === true) {
+    $params["inframe"] = true;
+    $response = new TemplateResponse($this->appName, "editor", $params, "base");
+} else {
 
-```php
-[cite_start]if ($isLoggedIn) { [cite: 42]
-    [cite_start]$response = new TemplateResponse($this->appName, [cite: 43]
-        [cite_start]"editor", $params, "base"); [cite: 44]
-[cite_start]} [cite: 45]
-```
+    if ($isLoggedIn) {
+        $response = new TemplateResponse($this->appName, "editor", $params);
+    } else {
 
-[cite\_start]The above section is our main object for modification[cite: 46]. [cite\_start]We actually only added one parameter: `"base"`[cite: 46].
+        $response = new PublicTemplateResponse($this->appName, "editor", $params);
 
-## 2.2. [cite\_start]Modification of `onlyoffice/templates/editor.php` [cite: 47, 48]
+        list($file, $error, $share) =
+        $this->fileUtility->getFileByToken($fileId, $shareToken);
 
-[cite\_start]Use a text editor to modify[cite: 49]:
+        if (!isset($error)) {
+            $response->setHeaderTitle($file->getName());
+        }
+    }
+}
+````
+
+The key part we modify is:
 
 ```php
-[cite_start]<?php if (!empty($_["inviewer"])) { ?> [cite: 50]
-[cite_start]class="onlyoffice-inviewer" [cite: 51]
-[cite_start]<?php } ?>> [cite: 52]
+if ($isLoggedIn) {
+    $response = new TemplateResponse($this->appName, "editor", $params, "base");
+}
 ```
 
-[cite\_start]Where[cite: 53]:
+Essentially, we just add the `"base"` parameter.
 
-[cite\_start]Replace `if (!empty($_["inviewer"]))` [cite: 54] [cite\_start]with[cite: 55]:
+## 2.2 Modify `onlyoffice/templates/editor.php`
+
+Edit the following snippet:
 
 ```php
-[cite_start]<?php if ($_["inframe"] !== true) { ?> [cite: 56]
+<?php if (!empty($_["inviewer"])) { ?>
+class="onlyoffice-inviewer"
+<?php } ?>
 ```
 
-[cite\_start]This should suffice[cite: 57].
-
-[cite\_start]I am unsure whether this is an ONLYOFFICE bug or an incomplete feature[cite: 58]. [cite\_start]After modifying these two locations, the above usage requirement can be met[cite: 58].
-
------
-
-# 3\. Nextcloud Template Function
-
-[cite\_start]Nextcloud provides two display templates[cite: 60].
-[cite\_start]**Core Difference:** `TemplateResponse`'s `renderAs` parameter[cite: 61].
-
-**1. [cite\_start]Text App - Full-Screen Mode (No Top Menu)** [cite: 62]
+Replace with:
 
 ```php
-[cite_start]return new TemplateResponse('text', 'main', [], 'base'); [cite: 63]
+<?php if ($_["inframe"] !== true) { ?>
 ```
 
-  * [cite\_start]Uses `renderAs = 'base'` [cite: 64]
-  * [cite\_start]Corresponding template: `core/templates/layout.base.php` [cite: 65]
-  * [cite\_start]Feature: Only has the basic HTML structure, without Nextcloud's top navigation bar (header)[cite: 66, 67].
+It is unclear whether this is a bug or an unfinished feature in OnlyOffice.
+After modifying these two locations, the full-screen mode works as expected.
 
-**2. [cite\_start]OnlyOffice App - With Top Menu** [cite: 68]
+# 3. Nextcloud Template Mechanism
+
+Nextcloud provides two layout templates:
+
+The core difference lies in the `renderAs` parameter of `TemplateResponse`.
+
+| Template Type    | Description                          |
+| ---------------- | ------------------------------------ |
+| `base`           | Full-screen mode (no top navigation) |
+| `user` (default) | With Nextcloud top menu              |
+
+## 3.1 Text App - Full-Screen Mode (No Top Menu)
 
 ```php
-[cite_start]if ($isLoggedin) { [cite: 69]
-    [cite_start]$response = new [cite: 70]
-    [cite_start]TemplateResponse($this->appName, "editor", $params); [cite: 71]
-[cite_start]} else [cite: 72]
-[cite_start]{ [cite: 72]
-    [cite_start]$response = new PublicTemplateResponse($this->appName, [cite: 73]
-    [cite_start]"editor", $params); [cite: 74]
-[cite_start]} [cite: 74]
+return new TemplateResponse('text', 'main', [], 'base');
 ```
 
-  * [cite\_start]Uses `renderAs = 'user'` (default value) [cite: 75]
-  * [cite\_start]Corresponding template: `core/templates/layout.user.php` [cite: 76]
-  * [cite\_start]Feature: Includes the complete Nextcloud top navigation bar (header), app menu, user menu, etc. [cite: 77]
+* Uses `renderAs = 'base'`
+* Template file: `core/templates/layout.base.php`
+* Features: basic HTML structure only, **no Nextcloud header**
 
-[cite\_start]**Layout Template Comparison** [cite: 78]
+## 3.2 OnlyOffice App - With Top Menu
 
-| Feature | `layout.base.php` | `layout.user.php` |
-| :--- | :--- | :--- |
-| **Top Navigation Bar** | × None | ✔ Has (`#header`) |
-| **App Menu** | × None | ✔ Has |
-| **User Menu** | × None | ✔ Has |
-| **Search Box** | × None | ✔ Has |
-| **Notifications** | × None | ✔ Has |
-| **`body` class** | `body-public` | `body-user` |
-| **Content Container** | `<div id="content" class="app-public">` | `<div id="content" class="app-{appid}">` |
+```php
+if ($isLoggedIn) {
+    $response = new TemplateResponse($this->appName, "editor", $params);
+} else {
+    $response = new PublicTemplateResponse($this->appName, "editor", $params);
+}
+```
 
------
+* Uses `renderAs = 'user'` (default)
+* Template file: `core/templates/layout.user.php`
+* Features: includes full Nextcloud header, app menu, user menu, etc.
 
-# 4\. Summary
+## Layout Comparison
 
-[cite\_start]ONLYOFFICE already provides support interfaces for the full-screen editor[cite: 81]. [cite\_start]It's just that some display logic is incomplete or there is a bug[cite: 81]. [cite\_start]It can be used after a small fix[cite: 82]. [cite\_start]It has not undergone full testing, so I cannot guarantee that this adjustment is perfect[cite: 82]. [cite\_start]I believe ONLYOFFICE will soon provide a formal full-screen editor function[cite: 83].
-[cite\_start]Source code is attached[cite: 84].
+| Feature        | layout.base.php                         | layout.user.php                          |
+| -------------- | --------------------------------------- | ---------------------------------------- |
+| Top navigation | ❌ No                                    | ✅ Yes                                    |
+| App menu       | ❌ No                                    | ✅ Yes                                    |
+| User menu      | ❌ No                                    | ✅ Yes                                    |
+| Search bar     | ❌ No                                    | ✅ Yes                                    |
+| Notifications  | ❌ No                                    | ✅ Yes                                    |
+| `<body>` class | `body-public`                           | `body-user`                              |
+| Content shell  | `<div id="content" class="app-public">` | `<div id="content" class="app-{appid}">` |
 
------
+# 4. Summary
+
+OnlyOffice already provides internal support for a full-screen editor through its interface.
+However, some display logic is either incomplete or contains a bug.
+With the minor adjustments above, you can already enable a truly full-screen editing experience.
+
+This patch has not yet been fully regression-tested, so compatibility is not guaranteed.
+It is expected that OnlyOffice will officially implement this feature in the near future.
+
+```
+

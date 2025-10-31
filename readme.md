@@ -140,4 +140,8 @@ This patch has not yet been fully regression-tested, so compatibility is not gua
 It is expected that OnlyOffice will officially implement this feature in the near future.
 
 ```
+---
+This project modifies portions of OnlyOffice (AGPLv3) for full-screen editing on Nextcloud.
+All modifications are provided under the same GNU AGPLv3 license.
+See the LICENSE file for full details.
 
